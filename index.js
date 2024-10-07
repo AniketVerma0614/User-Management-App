@@ -33,12 +33,12 @@ catch(err){
 connection.end();
 
 let getRandomUser= ()=> {
-    return [
-      faker.string.uuid(),
-      faker.internet.userName(),
-      faker.internet.email(),
-      faker.internet.password(),
-    ];
+    return {
+    id: faker.string.uuid(),
+    username: faker.internet.userName(),
+    email:  faker.internet.email(),
+    password:  faker.internet.password(),
+    };
 };
 
 
