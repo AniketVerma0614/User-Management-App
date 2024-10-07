@@ -10,8 +10,10 @@ const connection =mysql.createConnection({
     password: "19514",
   });
 
-//INSERTING NEW DATA !!!
+//refactor: Update data insertion logic to use parameterized query with static values
+
 let q= "INSERT INTO user (id,username,email,password) VALUE (?,?,?,?)";
+
 
 let user =["123","123_newuser","abc@gmail.com","abc"];
 
