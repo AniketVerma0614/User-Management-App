@@ -36,36 +36,40 @@ let getRandomUser = () => {
 };
 
 
-// try {
-//   connection.query(q, [data], (err, results) => {
-//     if (err) throw err;
-//     console.log('Data inserted successfully:', results);
-//   });
-// } catch (err) {
-//   console.log('Error inserting data:', err);
-// }
 
-// // Close the database connection
-// connection.end();
 
 
 //Now Creating a home-route
-app.get("/",(req,res)=>{
-    let q=`SELECT count(*) FROM user`;
-    try {
-  connection.query(q,(err, results) => {
-    if (err) throw err;
-    let count=results[0]["count(*)"];
-    res.render("home.ejs",{count});
-  });
-} catch (err) {
-  console.log(err);
-  res.send("some error in the DB");
-}
+app.get("/", (req, res) => {
+  let q = `SELECT count(*) FROM user`;
+  try {
+    connection.query(q, (err, result) => {
+      if (err) throw err;
+      let count = result[0]["count(*)"];
+      res.render("home.ejs", { count });
+    });
+  } catch (err) {
+    console.log(err);
+    res.send("some error in the DB");
+  }
 
 });
 
-
+//Show Route
+app.get("/user",(req,res)=>{
+  let q=`SELECT * FROM user`;
+  try {
+    connection.query(q, (err,users) => {
+      if (err) throw err;
+      // console.log(result);
+      // res.send(result);
+      res.render("showusers.ejs",{users});
+    });
+  } catch (err) {
+    console.log(err);
+    res.send("some error in the DB");
+  }
+});
 
 
 //Here I'm going to initiate the Server !!!
