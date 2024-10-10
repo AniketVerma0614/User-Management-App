@@ -5,8 +5,12 @@ const mysql = require('mysql2');
 const express = require("express");
 const app = express();
 const path = require("path");
+const methodOverride = require("method-override");
 
 //EJS TEMPALTE
+app.use(methodOverride("_method"));
+//So, we are patch request and we are sending the form data ==> SO, we need to PARSE it anyways !!!
+app.use(express.urlencoded({extended: true})); //So, that we can parse our forms data !!!
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"/views"));
 
@@ -70,6 +74,60 @@ app.get("/user",(req,res)=>{
     res.send("some error in the DB");
   }
 });
+
+
+//Edit Route
+app.get("/user/:id/edit",(req,res)=>{
+    let {id} = req.params;
+    let q=`SELECT * FROM user WHERE id='${id}'`;
+
+    try
+    {
+      connection.query(q,(err,result) =>{
+          if(err) throw err;
+          let user = result[0];
+          console.log(result);
+          res.render("edit.ejs",{user});
+      });
+    } 
+    catch(err) 
+    {
+      console.log(err);
+      res.send("Some Error in the DB !!!");
+    }
+});
+
+//Update(DB) Route
+app.patch("/user/:id", (req, res) => {
+  let { id } = req.params;
+  let { password: formPass, username: newUsername } = req.body;
+  let q = `SELECT * FROM user WHERE id = ?`;
+
+  try {
+    connection.query(q, [id], (err, result) => {
+      if (err) throw err;
+      let user = result[0];
+
+      if (!formPass) {
+        return res.send("Password field cannot be empty.");
+      }
+
+      if (formPass !== user.password) {
+        return res.send("WRONG password");
+      } else {
+        let q2 = `UPDATE user SET username = ? WHERE id = ?`;
+        connection.query(q2, [newUsername, id], (err, updateResult) => {
+          if (err) throw err;
+          res.redirect("/user"); // Redirect to the list of users after a successful update
+        });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+    res.send("Some Error in the DB !!!");
+  }
+});
+
 
 
 //Here I'm going to initiate the Server !!!
